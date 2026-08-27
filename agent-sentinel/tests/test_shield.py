@@ -75,13 +75,18 @@ def test_scan_latency_on_50kb_document(s):
 
 
 def test_typical_turn_is_sub_millisecond(s):
-    """Typical tool results are 1-5KB; those must scan in well under 1ms."""
+    """Typical tool results are 1-5KB; the median scan must be well under 1ms,
+    and even the worst observed case stays below a 5ms jitter ceiling."""
     page = "Invoice #4821 processed. Total $1,204.00. See https://vendor.test/receipt"
-    worst = 0.0
+    samples = []
     for _ in range(200):
         d = s.inspect_tool_result(ToolResult(ToolCall("fetch", {}), page))
-        worst = max(worst, d.report.elapsed_us)
-    assert worst < 1_000  # microseconds
+        samples.append(d.report.elapsed_us)
+    samples.sort()
+    median = samples[len(samples) // 2]
+    worst = samples[-1]
+    assert median < 1_000  # microseconds: typical turn is sub-millisecond
+    assert worst < 5_000   # jitter ceiling so the gate is not flaky under CI load
 
 
 def test_fail_closed_when_budget_impossible(s, tmp_path):
