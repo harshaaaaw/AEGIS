@@ -1,4 +1,4 @@
-"""Subsystem 3: ROI Attest — tamper-evident cost/benefit ledger.
+"""Subsystem 3: ROI Attest - tamper-evident cost/benefit ledger.
 
 Every autonomous decision claims value. ROI Attest only certifies a decision
 when it has a MEASURED benefit with a non-empty basis (no invented ROI). The

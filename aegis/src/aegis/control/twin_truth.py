@@ -1,4 +1,4 @@
-"""Subsystem 6: Twin Truth — digital-twin counterfactual simulation.
+"""Subsystem 6: Twin Truth - digital-twin counterfactual simulation.
 
 Given a baseline and an effect model, Twin Truth answers "what would the metric
 look like if we changed decision_vars?" It is a deterministic linear simulator

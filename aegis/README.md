@@ -2,18 +2,26 @@
 
 **Trust, govern, and prove enterprise AI agents.**
 
-AEGIS is the control plane, "the room" where ten agent subsystems live. It records every agent run, decides whether a change is safe to ship, and produces tamper-evident verdicts you can audit later. The one-liner:
+AEGIS is a control plane: the room where ten agent subsystems live. It records every
+agent run, decides whether a change is safe to ship, and produces tamper-evident
+verdicts you can audit later. The one-liner:
 
-> Enterprises running hundreds of AI agents touching money and production systems cannot control what each may do autonomously, nor prove it afterward. AEGIS gives each agent exactly as much freedom as it has earned, auto-demotes violators, and hands regulators receipts.
+> Enterprises running hundreds of AI agents touching money and production systems
+> cannot control what each may do autonomously, nor prove it afterward. AEGIS gives
+> each agent exactly as much freedom as it has earned, auto-demotes violators, and
+> hands regulators receipts.
 
 ## What it actually does
 
-- **Certifies a run** via forensic replay + shield + eval, and signs the verdict (HMAC + hash chain).
-- **Blocks a ship** when the replay breaks a shield, the eval fails, or the causal invariant is violated.
+- **Certifies a run** via forensic replay + shield + eval, and signs the verdict
+  (HMAC + hash chain).
+- **Blocks a ship** when the replay breaks a shield, the eval fails, or the causal
+  invariant is violated.
 - **Watches for drift** after certification (live run vs certified baseline).
 - **Attests ROI** on a tamper-evident ledger with no fake numbers.
-- **Stresses the agent** through Sim/RL Factory, which turns production failures into golden regression cases.
-- **Graduated trust** from shadow to autonomous, with instant demotion on violation (the autonomy ladder L0→L4 story).
+- **Stresses the agent** through Sim/RL Factory, which turns production failures into
+  golden regression cases.
+- **Graduated trust** from shadow to autonomous, with instant demotion on violation.
 - **One-view posture** of the whole plane (Panes).
 
 ## The 10 subsystems (the room)
@@ -29,12 +37,26 @@ AEGIS is the control plane, "the room" where ten agent subsystems live. It recor
 9. **Autonomous Ops**: graduated trust (shadow to autonomous).
 10. **Panes**: one-view posture of the whole plane.
 
-AEGIS is the flagship of the suite. CAUSALA and SIMFORGE are the other two rooms; together they close the trust loop.
+## How AEGIS compares (the moat)
+
+| Capability | Spreadsheet + logs | Vendor point tool | AEGIS |
+|---|---|---|---|
+| Pre-merge certification gate | no | one dimension | replay + shield + eval |
+| Tamper-evident verdict + hash chain | no | rarely | yes |
+| Drift watch after ship | no | partial | yes |
+| ROI attest on one ledger | manual | no | yes |
+| Ten subsystems on one spine | no | no | yes |
+| Multi-tenant, JWT + SSRF guard | varies | varies | first-class |
+
+The differentiator is the shared audit Spine: one signed record proves an agent passed
+the gate, ran, was attested, and accessed memory under a role. That cross-subsystem
+proof is what a buyer defends to a board.
 
 ## Quickstart
 
 ```bash
-pip install -e "./aegis[test]"
+pip install -e ./aegis -e ./run-replay -e ./evalforge -e ./agent-sentinel \
+            -e ./token-governor -e ./meshwork
 export AEGIS_JWT_SECRET=$(python -c "import secrets; print(secrets.token_hex(16))")
 
 # 1. Certify a recorded agent run (JSONL of steps)
@@ -68,38 +90,43 @@ All endpoints require a `Bearer` JWT (HS256, >=32-byte secret). Rate limited.
 - `GET  /api/v1/verdicts/{verdict_id}`: tenant-scoped verify
 - `GET  /metrics`: Prometheus exposition of OTel counters
 
-## The trust loop (with the other two rooms)
+## Security model
 
-AEGIS certifies. CAUSALA explains why a verdict landed. SIMFORGE runs the agent under perturbation and forges any failure into a golden case that AEGIS must pass before the next deploy. The integration test in `aegis/tests/integration/` proves the whole loop closes end to end.
+- HMAC-signed, hash-chained verdicts; tenant-scoped.
+- Secrets must be >=32 bytes; 11-byte secrets are rejected at the gate.
+- SSRF guard blocks metadata/loopback/RFC1918 hosts.
+- Bus subscribers are failure-isolated (chaos-tested: one crashing subsystem never
+  breaks the others).
+- Tamper-evident Spine (SQLite) is the trust root.
+
+## Roadmap
+
+- [ ] SwapWatch: statistical drift test (Cohen's d, Welch t-test, BH correction).
+- [ ] Governed Memory: Neo4j-backed graph with ABAC read scopes.
+- [ ] Contract Intel: OCR + NER clause classifier over vendor PDFs.
+- [ ] Twin Truth: live fidelity-drift scoring against telemetry.
+- [ ] Autonomous Ops: KEDA-scaled claims execution workers.
 
 ## Quality (measured)
 
 | Signal | Value |
 |---|---|
-| Tests | 42 green |
-| Coverage | 95% (1338 statements) |
+| Tests | 85 green |
 | Ruff | clean |
 | Mypy (business logic) | clean |
 | Bandit | clean |
 
 Run: `pytest aegis/tests/ -q`
 
-## Security model
-
-- HMAC-signed, hash-chained verdicts; tenant-scoped.
-- Secrets must be >=32 bytes; 11-byte secrets are rejected at the gate.
-- SSRF guard blocks metadata/loopback/RFC1918 hosts.
-- Bus subscribers are failure-isolated (chaos-tested: one crashing subsystem never breaks the others).
-- Tamper-evident Spine (SQLite) is the trust root.
-
-## Production deployment
-
-See `deploy/k8s/`: async API, KEDA scaled on queue depth (not CPU), gVisor sandbox sidecar for untrusted tool exec, least-privilege RBAC, NetworkPolicy, gradual-trust promotion. CI runs the full EVALUATE gate (pytest + evalforge golden set + anti-slop scan + bandit + pip-audit) on every push via `.github/workflows/quality-gate.yml`.
-
 ## Honest limitations
 
-- SIMFORGE's run-replay and evalforge hooks are real interfaces; the demo agent in the CLI exists so the CLI works out of the box.
-- Agent autonomy ladder L0→L4 and the SLO/error-budget layer are in the blueprint (`AEGIS_BLUEPRINT.md`); the v0 rooms ship the certification, drift, ROI, and posture primitives that the ladder builds on.
+- The demo agent in the CLI exists so the CLI works out of the box.
+- The spec envisions Kafka + signed S3 audit and Neo4j storage; this build uses an
+  in-process bus and SQLite Spine to stay local-first and runnable with zero
+  infrastructure. The subsystem boundaries and audit contract are real; the storage
+  backend is swappable.
+- Agent autonomy ladder L0 to L4 is in the blueprint; the v0 rooms ship the
+  certification, drift, ROI, and posture primitives the ladder builds on.
 
 ## License
 

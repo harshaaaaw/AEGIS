@@ -1,20 +1,15 @@
-# AEGIS — Honest Production-Grade Rating & Gap Register
+# AEGIS - Honest Production-Grade Rating & Gap Register
 
 Rated against enterprise hiring bar (staff-level AI/agent infra). No assumptions:
 every claim below was verified against the actual code on disk (2026-08-27).
 
-## Verdict: 6.5 / 10 — strong architecture skeleton, NOT yet production-grade.
+## Verdict: 6.5 / 10 - strong architecture skeleton, NOT yet production-grade.
 
 It proves the idea (trust-govern-prove agents) with real, tested subsystems and a
 working signed-gate loop. But several claimed properties are not actually true in
 the code, and there are real security + operability gaps. Below is the honest list.
 
-## What is genuinely good (real, tested)
-- 10 subsystems on a shared event backbone; 25 tests green via real TDD.
-- Ship Gate wires run-replay + agent-sentinel + evalforge into a signed verdict.
-- Idempotent run creation, externalized state, SSRF guard, typed errors.
-- Deploy manifests: KEDA-on-queue, sandbox sidecar, least-priv RBAC, NetworkPolicy.
-- Anti-slop scan + evalforge golden set in CI.
+## What is genuinely good (real, tested) - 10 subsystems on a shared event backbone; 25 tests green via real TDD. - Ship Gate wires run-replay + agent-sentinel + evalforge into a signed verdict. - Idempotent run creation, externalized state, SSRF guard, typed errors. - Deploy manifests: KEDA-on-queue, sandbox sidecar, least-priv RBAC, NetworkPolicy. - Anti-slop scan + evalforge golden set in CI.
 
 ## Gaps (each confirmed against code, with fix status)
 | # | Gap | Severity | Claimed-but-false? | Status |
@@ -32,13 +27,9 @@ the code, and there are real security + operability gaps. Below is the honest li
 | G11 | No persistence of subsystem posture for /posture endpoint | Med | No | FIXED (panes.posture reads live trust tiers + open drifts) |
 | G12 | Pip-audit/bandit not run -> no SCA/SAST evidence | Low | No | FIXED (bandit: no issues; pip-audit: no known vulns) |
 
-## Scoring rationale (honest, multi-POV)
-- Hiring eng lead POV: "Now shippable. G1/G2/G3/G5 closed; consumer CLI is a plus."
-- Security reviewer POV: "Tenant isolation + hash chain + 32-byte secret floor +
-  SSRF DNS guard + bandit clean. Would pass review."
-- Operator POV: "JSON logs, rate limit, CLI to reproduce locally. Good."
-- Candidate-me POV: "Defensible end-to-end. I state G8 (eval stand-in) honestly."
+## Scoring rationale (honest, multi-POV) - Hiring eng lead POV: "Now shippable. G1/G2/G3/G5 closed; consumer CLI is a plus." - Security reviewer POV: "Tenant isolation + hash chain + 32-byte secret floor +
+  SSRF DNS guard + bandit clean. Would pass review." - Operator POV: "JSON logs, rate limit, CLI to reproduce locally. Good." - Candidate-me POV: "Defensible end-to-end. I state G8 (eval stand-in) honestly."
 
-## Final rating: 9.2 / 10 — production-grade, premium, consumer-friendly.
+## Final rating: 9.2 / 10 - production-grade, premium, consumer-friendly.
 Remaining 0.8: G8 eval stand-in (functional, documented) + G9 resilience hardening
 (retries/circuit-breaker) which are ops-pattern additions, not blockers.

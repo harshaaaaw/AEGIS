@@ -1,4 +1,4 @@
-"""Subsystem 9: Autonomous Ops — graduated trust enforcement.
+"""Subsystem 9: Autonomous Ops - graduated trust enforcement.
 
 Agents are promoted through trust tiers (shadow -> read_only -> limited_write ->
 autonomous). Autonomous actions are only permitted at limited_write+. Any

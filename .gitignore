@@ -10,3 +10,8 @@ __pycache__/
 .venv/
 *.jsonl
 *.cov.json
+
+# runtime artifacts
+__*/
+.boot_*/
+state/

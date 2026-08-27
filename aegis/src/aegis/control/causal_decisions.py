@@ -1,4 +1,4 @@
-"""Subsystem 7: Causal Decisions — real ordinary-least-squares effect estimator.
+"""Subsystem 7: Causal Decisions - real ordinary-least-squares effect estimator.
 
 Computes the average treatment effect of a binary treatment on an outcome using
 OLS (slope of outcome on treatment). It reports an honest confidence interval

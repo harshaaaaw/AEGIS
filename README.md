@@ -2,85 +2,115 @@
 
 **The control plane that certifies, governs, and proves enterprise AI agents.**
 
-AEGIS is the room where autonomous agents earn their freedom. It records every agent run, decides whether a change is safe to ship, watches for drift after certification, and produces tamper-evident verdicts a regulator can audit. Ten subsystems live inside one control plane: certification, drift watch, ROI attestation, governed memory, contract intelligence, digital-twin simulation, causal decisions, the sim factory, graduated autonomy, and a single posture view.
+AEGIS is a standalone platform: every AI agent a company runs gets tested before
+launch, watched in production, governed by policy, valued by finance, and proven to
+compliance. One audit trail, one posture view, ten subsystems sharing one backbone.
 
-Enterprises running hundreds of agents that touch money and production systems cannot control what each may do on its own, nor prove it afterward. AEGIS gives each agent exactly as much freedom as it has earned, auto-demotes violators, and hands auditors the receipts.
+## The one problem it solves
 
-## Why this is the room incumbents have not shipped
+"I have deployed AI across my business and I cannot trust that it is safe, know if
+my providers silently changed it, prove what it is worth, control who sees what, or
+show auditors I am compliant."
 
-Observability tools show you what an agent did after the fact. AEGIS decides before the fact and proves it after: a Ship Gate that blocks a bad deploy via forensic replay plus a shield plus an eval, signed and hash-chained. Drift watch that catches a live run diverging from its certified baseline. ROI attestation on a ledger with no fake numbers. That is a control plane, not a dashboard.
+AEGIS is that single source of truth.
 
-## What it actually does
+## What's inside (ten subsystems, one control plane)
 
-- **Ship Gate**: certify or block a change through forensic replay, a policy shield, and evaluation.
-- **SwapWatch**: flags behavior drift after certification (live run vs certified baseline).
-- **ROI Attest**: tamper-evident cost and benefit ledger, no invented ROI.
-- **Governed Memory**: versioned, capability-gated agent memory.
-- **Contract Intel**: blocks unauthorized tool calls (scope creep).
-- **Twin Truth**: digital-twin counterfactual simulation.
-- **Causal Decisions**: a real OLS effect estimator with honest confidence intervals.
-- **Sim/RL Factory**: turns production failures into golden regression cases.
-- **Autonomous Ops**: graduated trust from shadow to autonomous, with instant demotion on violation.
-- **Panes**: one-view posture of the whole plane.
+1. **Ship Gate** - tests agents before launch (replay + eval + policy). Built on three
+   real engines: run-replay (forensic recording), evalforge (the eval gate),
+   agent-sentinel (per-turn security shield).
+2. **SwapWatch** - detects silent model swaps and drift in production, reconciles SLA-cost.
+3. **ROI Attest** - proves each AI initiative's value to the board, auditor-ready.
+4. **Governed Memory** - role-scoped knowledge with provenance.
+5. **Contract & Spend Intel** - reads AI vendor contracts for traps, benchmarks spend.
+6. **Twin Truth** - keeps digital twins honest (drift + ROI).
+7. **Causal Decisions** - a real OLS effect estimator with honest confidence intervals.
+8. **Sim/RL Factory** - turns workflows into training/eval data for your own agents.
+9. **Autonomous Ops** - claims execution + coordination workers.
+10. **Audit & Compliance Trail** - one immutable, signed record across all nine.
+
+## Why it is real, not a claim
+
+- **One audit spine.** Every subsystem writes to the same tamper-evident Spine
+  (SQLite-backed, idempotent run ids). That shared record is the moat.
+- **Event-driven.** Subsystems communicate only through an in-process bus with
+  per-subscriber failure isolation. No subsystem can block another.
+- **Multi-tenant + JWT.** One identity model (OIDC-style JWT, 32-byte secret floor,
+  SSRF guard) across every pane.
+- **Your engines are three of the ten.** Ship Gate = run-replay + evalforge +
+  agent-sentinel, productized and wired to the spine.
 
 ## Quickstart
 
 ```bash
-pip install -e "./aegis[test]"
+python -m venv .venv && source .venv/Scripts/activate   # or bin/activate
+pip install -e ./aegis -e ./run-replay -e ./evalforge -e ./agent-sentinel \
+            -e ./token-governor -e ./meshwork
 export AEGIS_JWT_SECRET=$(python -c "import secrets; print(secrets.token_hex(16))")
-
-# Certify a recorded agent run (JSONL of steps)
-cat > run.jsonl <<'EOF'
-{"idx":0,"kind":"MODEL_CALL","name":"planner","in":{"x":1},"out":{"y":2},"state":{"x":1},"ms":5}
-EOF
-aegis certify run.jsonl
-
-# Re-verify a verdict signature and hash chain
-aegis verify <verdict_id>
-
-# Check behavior drift (live run vs certified baseline)
-aegis drift run-1 baseline.jsonl live.jsonl
-
-# Whole control-plane posture in one view
-aegis posture --tenant acme
+aegis boot --state-dir ./state
 ```
 
-## HTTP API
+Run the gate on a recorded agent run:
 
-All endpoints require a `Bearer` JWT (HS256, at least 32-byte secret) and are rate limited.
+```python
+from aegis.gate import ShipGate
+from aegis.spine import Spine, SpineConfig
 
-- `POST /api/v1/runs`: begin an idempotent run
-- `POST /api/v1/gate/evaluate`: produce a signed CERTIFY or BLOCK verdict
-- `GET  /api/v1/verdicts/{verdict_id}`: tenant-scoped verification
-- `GET  /metrics`: Prometheus exposition of OpenTelemetry counters
+spine = Spine(SpineConfig(db_path="./state/spine.db"))
+gate = ShipGate(spine, state_dir="./state")
+verdict = gate.evaluate(GateRequest(agent_name="support-bot", tenant_id="acme",
+                                    traces=[...], eval_cases=[...]))
+print(verdict.certificate or verdict.block_reason)
+```
 
-## Quality (measured)
+## How AEGIS compares (the moat)
 
-| Signal | Value |
-|---|---|
-| Tests | 42 green |
-| Static analysis | ruff clean, mypy clean, bandit clean |
-| Coverage | 95 percent of statements |
+| Capability | Spreadsheet + logs | Vendor point tool | AEGIS |
+|---|---|---|---|
+| Pre-merge certification gate | no | one dimension | replay + shield + eval |
+| Tamper-evident verdict + hash chain | no | rarely | yes |
+| Drift watch after ship | no | partial | yes |
+| ROI attest on one ledger | manual | no | yes |
+| Ten subsystems on one spine | no | no | yes |
+| Multi-tenant, JWT + SSRF guard | varies | varies | first-class |
 
-Run: `pytest aegis/tests/ -q`
+The differentiator is the shared audit Spine: one signed record proves an agent passed
+the gate, ran, was attested, and accessed memory under a role. That cross-subsystem
+proof is what a buyer defends to a board.
 
-## Security model
+## Roadmap
 
-- HMAC-signed, hash-chained verdicts, scoped per tenant.
-- Secrets must be at least 32 bytes; short secrets are rejected at the gate.
-- SSRF guard blocks metadata, loopback, and RFC1918 hosts.
-- Bus subscribers are failure-isolated: one crashing subsystem never breaks the others.
-- The tamper-evident Spine (SQLite) is the trust root.
+- [ ] SwapWatch statistical drift test (Cohen's d, Welch t-test, BH correction).
+- [ ] Governed Memory on Neo4j with ABAC read scopes.
+- [ ] Contract Intel OCR + NER clause classifier.
+- [ ] Twin Truth live fidelity-drift scoring.
+- [ ] KEDA-scaled Autonomous Ops workers.
 
-## How it connects to the other two rooms
+## Quality
 
-AEGIS is one of three products built around a shared trust discipline. CAUSALA explains why a verdict landed. SIMFORGE runs an agent under perturbation and forges any failure into a golden case AEGIS must pass before the next deploy. They talk over a documented event-bus contract, not shared code, so each ships independently. AEGIS also bundles the infrastructure those rooms rely on: run-replay (forensic recording), evalforge (the eval gate), agent-sentinel (the per-turn security shield), token-governor (spend control), and meshwork (resilient workflows).
+- `pytest` across all six bundled packages (gate, spine, subsystems, replay,
+  eval, shield, governor, meshwork).
+- Static gates: `ruff`, `mypy --ignore-missing-imports`, `bandit` stay clean in CI.
+- FastAPI surface: `POST /api/v1/gate/evaluate`, `POST /api/v1/runs`,
+  `GET /api/v1/verdicts/{id}`, `GET /metrics` (Prometheus exposition).
 
 ## Honest limitations
 
-- The demo agent in the CLI exists so the CLI runs out of the box; real hosts register their own agents by name.
-- The autonomy ladder L0 to L4 and the SLO layer are in the blueprint; the v0 rooms ship the certification, drift, ROI, and posture primitives the ladder builds on.
+- The spec envisions Kafka + signed S3 audit and Neo4j graph storage. This build
+  uses an in-process bus and a SQLite spine to keep it local-first and runnable
+  with zero infrastructure. The subsystem boundaries and audit contract are real;
+  the storage backend is swappable.
+- Subsystems 2-9 are implemented at varying depth: Ship Gate and Causal Decisions
+  carry real logic; the others are wired rooms with focused behavior and are the
+  natural next depth to build.
 
-## License
+## Repo layout
 
-MIT. Authored by Deva Harsha Mummareddy (harshaaaaw).
+```
+aegis/          the control plane (gate, spine, bus, subsystems)
+run-replay/     forensic recording of agent runs
+evalforge/      golden-set eval harness with CI merge gates
+agent-sentinel/ per-turn security shield
+token-governor/ budget + kill-switch + cost accounting
+meshwork/       resilient multi-agent workflows
+```

@@ -1,4 +1,4 @@
-"""Subsystem 2: SwapWatch — behavior-drift detection.
+"""Subsystem 2: SwapWatch - behavior-drift detection.
 
 Compares a live agent run against its certified baseline (the verdict the Ship
 Gate already produced). If any field's live output diverges from the certified

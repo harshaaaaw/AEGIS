@@ -1,4 +1,4 @@
-"""Subsystem 8: Sim/RL Factory — synthesize eval cases from failure corpora.
+"""Subsystem 8: Sim/RL Factory - synthesize eval cases from failure corpora.
 
 Given a corpus of real failures (input + observed failure), generate eval cases
 that assert the failure is NOT reproduced. This feeds the Ship Gate's evalforge

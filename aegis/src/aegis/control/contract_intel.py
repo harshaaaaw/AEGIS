@@ -1,4 +1,4 @@
-"""Subsystem 5: Contract & Spend Intel — authorized-tool / budget enforcement.
+"""Subsystem 5: Contract & Spend Intel - authorized-tool / budget enforcement.
 
 Before an agent calls a tool, this room checks the call against the agent's
 authorized tool set (a contract). Unauthorized calls (scope creep, e.g. DROP

@@ -1,4 +1,4 @@
-"""Subsystem 4: Governed Memory — versioned, capability-gated memory.
+"""Subsystem 4: Governed Memory - versioned, capability-gated memory.
 
 Agent memory is dangerous if any agent can read/write any fact. Governed Memory
 versions every write (audit trail) and gates reads on a capability set the
