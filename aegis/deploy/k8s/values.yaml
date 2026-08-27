@@ -1,0 +1,26 @@
+# Graduated trust is enforced in code (autonomous_ops), but GitOps promotes
+# the trust tier via this values file. Day-one is shadow: no prod autonomy.
+aegis:
+  trust:
+    defaultTier: shadow          # shadow -> read_only -> limited_write -> autonomous
+    autonomousMinTier: limited_write
+  # Externalized state: every process is cattle; state lives in Postgres/Redis/pvc.
+  state:
+    dbPath: /data/aegis.db
+    stateDir: /data/runs
+    redis: aegis-redis:6379
+  # LLM-native observability: traces -> OTel collector -> Prometheus/Grafana.
+  observability:
+    otelCollector: http://otel-collector:4317
+    metricsPort: 8000
+  # SLOs (referenced by Alertmanager).
+  slo:
+    gateAvailability: 0.999
+    decisionP95Seconds: 300
+  # SSRF guard is enforced in code (security.is_ssrf_safe); never fetch metadata IPs.
+  ssrf:
+    blockInternal: true
+  # Audit: quarterly signed export of the hash-chained verdict ledger.
+  audit:
+    ledgerPath: /data/verdicts.jsonl
+    exportSchedule: "0 0 1 1,4,7,10 *"

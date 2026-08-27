@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: aegis-control
+  labels: { app: aegis-control }
+---
+# Least-privilege RBAC: the control plane can only read/write its own configmaps
+# and the verdict ledger; it cannot touch other namespaces or node/secret APIs.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: aegis-control
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["aegis-config"]
+    verbs: ["get", "watch", "update"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["aegis-secrets"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: aegis-control
+subjects:
+  - kind: ServiceAccount
+    name: aegis-control
+roleRef:
+  kind: Role
+  name: aegis-control
+  apiGroup: rbac.authorization.k8s.io
+---
+# NetworkPolicy: the control plane only talks to redis, postgres, and the OTel
+# collector. No east-west sprawl.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aegis-control
+spec:
+  podSelector:
+    matchLabels: { app: aegis-control }
+  policyTypes: [Ingress, Egress]
+  ingress:
+    - from:
+        - podSelector: { matchLabels: { app: aegis-gateway } }
+      ports: [{ port: 8000 }]
+  egress:
+    - to:
+        - podSelector: { matchLabels: { app: aegis-redis } }
+      ports: [{ port: 6379 }]
+    - to:
+        - podSelector: { matchLabels: { app: aegis-postgres } }
+      ports: [{ port: 5432 }]
+    - to:
+        - podSelector: { matchLabels: { app: otel-collector } }
+      ports: [{ port: 4317 }]

@@ -1,0 +1,20 @@
+[project]
+name = "token-governor"
+version = "1.0.0"
+description = "Budgets, kill switches, cascade routing and cost-per-successful-outcome accounting for LLM agent fleets."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Deva Harsha Mummareddy" }]
+keywords = ["llm", "finops", "agents", "cost-control", "budgets"]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

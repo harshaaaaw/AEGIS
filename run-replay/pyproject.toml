@@ -1,0 +1,20 @@
+[project]
+name = "run-replay"
+version = "1.0.0"
+description = "Time-travel forensics for agent runs: record every step, replay deterministically, pinpoint divergences."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Deva Harsha Mummareddy" }]
+keywords = ["llm", "agents", "debugging", "observability", "forensics"]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

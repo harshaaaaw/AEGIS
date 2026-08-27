@@ -1,0 +1,20 @@
+name: aegis-evaluate-gate
+on: [push, pull_request]
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Install uv
+        run: pipx install uv
+      - name: Create venv + install
+        run: |
+          uv venv .venv
+          uv pip install --python .venv/bin/python -e "./aegis[test]"
+      - name: Run full EVALUATE gate (pytest + evalforge golden set + anti-slop scan)
+        run: .venv/bin/python -m pytest aegis/tests/ -q
+      - name: Fail the merge if any gate regressed
+        if: failure()
+        run: exit 1

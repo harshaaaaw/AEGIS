@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aegis-control
+  labels: { app: aegis-control, tier: control-plane }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: aegis-control } }
+  template:
+    metadata:
+      labels: { app: aegis-control, tier: control-plane }
+    spec:
+      serviceAccountName: aegis-control
+      automountServiceAccountToken: false   # anti-pattern: never mount the SA token by default
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: { type: RuntimeDefault }
+      initContainers: []                     # none: no model weights in image (anti-pattern avoidance)
+      containers:
+        - name: api
+          image: aegis/control:0.1.0
+          args: ["uvicorn", "aegis.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+          ports: [{ containerPort: 8000 }]
+          env:
+            - name: AEGIS_DB_PATH
+              value: "/data/aegis.db"
+            - name: AEGIS_STATE_DIR
+              value: "/data/runs"
+            - name: AEGIS_JWT_SECRET
+              valueFrom: { secretKeyRef: { name: aegis-secrets, key: jwt_secret } }
+          envFrom:
+            - secretRef: { name: aegis-secrets }
+          resources:
+            requests: { cpu: "250m", memory: "256Mi" }
+            limits: { cpu: "1", memory: "512Mi" }
+          # readiness probes only; agent work is async, never block HTTP on it
+          readinessProbe:
+            httpGet: { path: /metrics, port: 8000 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - { name: data, mountPath: /data }
+          # agent sandbox sidecar (gVisor/Kata) for untrusted tool execution
+        - name: sandbox
+          image: aegis/sandbox:0.1.0
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile: { type: RuntimeDefault }
+          resources:
+            requests: { cpu: "100m", memory: "128Mi" }
+            limits: { cpu: "500m", memory: "256Mi" }
+      volumes:
+        - name: data
+          persistentVolumeClaim: { claimName: aegis-data }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aegis-control
+spec:
+  selector: { app: aegis-control }
+  ports: [{ port: 8000, targetPort: 8000 }]
+  type: ClusterIP
+---
+# KEDA scales the async worker on QUEUE DEPTH, not CPU (bhavishyapandit anti-pattern:
+# do not HPA on CPU for agent/LLM workloads).
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: aegis-worker
+spec:
+  scaleTargetRef: { name: aegis-worker }
+  minReplicaCount: 0
+  maxReplicaCount: 20
+  triggers:
+    - type: redis
+      metadata:
+        address: aegis-redis:6379
+        listName: aegis:gate:queue
+        listLength: "5"

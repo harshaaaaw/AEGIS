@@ -1,0 +1,20 @@
+[project]
+name = "agent-sentinel"
+version = "0.1.0"
+description = "A policy firewall for LLM agents: scans tool traffic, blocks prompt injection and data exfiltration, and writes a tamper-evident audit trail."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Deva Harsha Mummareddy" }]
+keywords = ["llm", "agents", "security", "prompt-injection", "firewall"]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

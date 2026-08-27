@@ -1,0 +1,20 @@
+[project]
+name = "evalforge"
+version = "1.0.0"
+description = "Golden-set evaluation harness with CI merge gates for LLM pipelines: recall@k, faithfulness, regression attribution."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Deva Harsha Mummareddy" }]
+keywords = ["llm", "evals", "rag", "testing", "ci", "regression"]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
