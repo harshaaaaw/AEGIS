@@ -9,7 +9,7 @@
   AEGIS is the open source gate the other 60% ship through.
 </p>
 
-<p align="center"><strong>One open source room where every AI agent is certified before it ships, watched after it runs, and proven to auditors on one tamper-evident Spine.</strong></p>
+<p align="center"><strong>AEGIS is one open source room where every AI agent is certified before it ships, watched after it runs, and proven to auditors on one tamper-evident Spine.</strong></p>
 
 <p align="center">
 
