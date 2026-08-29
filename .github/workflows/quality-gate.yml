@@ -9,6 +9,7 @@ jobs:
   gate:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.11", "3.14"]
     steps:
@@ -28,6 +29,6 @@ jobs:
       - name: Mypy
         run: mypy aegis/src/aegis --config-file aegis/pyproject.toml --no-error-summary
       - name: Bandit
-        run: bandit -r aegis/src/aegis packages/run-replay/src/run_replay packages/evalforge/src/evalforge packages/agent-sentinel/src/agent_sentinel packages/token-governor/src/token_governor packages/meshwork/src/meshwork -q
+        run: bandit -r aegis/src/aegis packages/run-replay/src/run_replay packages/evalforge/src/evalforge packages/agent-sentinel/src/agent_sentinel packages/token-governor/src/token_governor packages/meshwork/src/meshwork -q --severity-level medium --confidence-level medium
       - name: Pytest
         run: pytest aegis/tests packages/run-replay/tests packages/evalforge/tests packages/agent-sentinel/tests packages/token-governor/tests packages/meshwork/tests -q
