@@ -7,13 +7,14 @@ We treat contributor onboarding as the activation funnel. The goal is your first
 ## What lives here
 
 - `aegis/` - the control plane (gate, spine, bus, ten subsystems)
-- `run-replay/`, `evalforge/`, `agent-sentinel/`, `token-governor/`, `meshwork/` - the bundled infrastructure AEGIS is built on
+- `packages/` - the bundled engines AEGIS is built on (`run-replay`, `evalforge`, `agent-sentinel`, `token-governor`, `meshwork`)
+- `docs/` - logo and terminal demo
 
 ## Local setup - 3 steps
 
 ```bash
 python -m venv .venv && source .venv/Scripts/activate  # Windows: .venv\Scripts\activate
-pip install -e ./aegis -e ./run-replay -e ./evalforge -e ./agent-sentinel -e ./token-governor -e ./meshwork
+pip install -e ./aegis -e ./packages/run-replay -e ./packages/evalforge -e ./packages/agent-sentinel -e ./packages/token-governor -e ./packages/meshwork
 export AEGIS_JWT_SECRET=$(python -c "import secrets; print(secrets.token_hex(16))")
 ```
 

@@ -40,7 +40,7 @@ We put the whole lifecycle in one room. Every agent lives here, gets replayed an
 You do not need a platform team to try it. It runs on your laptop, installs with pip, and certifies a run in one command. No cluster, no secret to find. If you like it, run the same contract in Kubernetes. MIT, self-hosted, no sales call to get started.
 
 ```bash
-git clone https://github.com/harshaaaaw/aegis.git && pip install -e ./aegis -e ./run-replay -e ./evalforge -e ./agent-sentinel -e ./token-governor -e ./meshwork && aegis certify run.jsonl
+git clone https://github.com/harshaaaaw/aegis.git && pip install -e ./aegis -e ./packages/run-replay -e ./packages/evalforge -e ./packages/agent-sentinel -e ./packages/token-governor -e ./packages/meshwork && aegis certify run.jsonl
 ```
 
 <p align="center">
@@ -73,7 +73,7 @@ Copy paste on a clean machine. No Kubernetes, no JWT setup, no secret to find.
 # 1. Clone and install (one command installs the control plane and its engines)
 git clone https://github.com/harshaaaaw/aegis.git && cd aegis
 python -m venv .venv && source .venv/Scripts/activate  # Windows: .venv\Scripts\activate
-pip install -e ./aegis -e ./run-replay -e ./evalforge -e ./agent-sentinel -e ./token-governor -e ./meshwork
+pip install -e ./aegis -e ./packages/run-replay -e ./packages/evalforge -e ./packages/agent-sentinel -e ./packages/token-governor -e ./packages/meshwork
 
 # 2. Certify a recorded run (JSONL of steps - works out of the box with no secret)
 cat > run.jsonl <<'EOF'
