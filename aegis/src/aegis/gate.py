@@ -12,6 +12,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import tempfile
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -63,9 +64,9 @@ class _VerdictRow:
 class ShipGate:
     def __init__(self, spine: Spine, state_dir: str):
         self.spine = spine
-        self.state_dir = state_dir
-        self.sentinel = Sentinel(audit_root=f"{state_dir}/.sentinel")
-        self.evaluator = EvalRunner(state_dir=f"{state_dir}/.evalforge")
+        self.state_dir = state_dir or tempfile.mkdtemp(prefix="aegis-")
+        self.sentinel = Sentinel(audit_root=f"{self.state_dir}/.sentinel")
+        self.evaluator = EvalRunner(state_dir=f"{self.state_dir}/.evalforge")
         self._signing_key = spine.cfg.jwt_secret.encode()
 
     def _load_run(self, run_id: str):
