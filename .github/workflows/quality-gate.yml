@@ -21,7 +21,8 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install ruff mypy bandit pytest pytest-asyncio
-          for p in aegis packages/run-replay packages/evalforge packages/agent-sentinel packages/token-governor packages/meshwork; do
+          pip install -e ./aegis
+          for p in packages/run-replay packages/evalforge packages/agent-sentinel packages/token-governor packages/meshwork; do
             if [ -f "$p/pyproject.toml" ]; then pip install -e "./$p" --no-deps || true; fi
           done
       - name: Ruff
