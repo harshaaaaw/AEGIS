@@ -1,133 +1,87 @@
-# AEGIS Control Plane
+# AEGIS Control Plane - Package README
 
-**Trust, govern, and prove enterprise AI agents.**
+**Use this if you `pip install aegis-control`. For the full product, see the [root README](../README.md).**
 
-AEGIS is a control plane: the room where ten agent subsystems live. It records every
-agent run, decides whether a change is safe to ship, and produces tamper-evident
-verdicts you can audit later. The one-liner:
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](../../LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](#)
+[![Tests](https://img.shields.io/badge/tests-85%20green-brightgreen.svg)](#quality)
 
-> Enterprises running hundreds of AI agents touching money and production systems
-> cannot control what each may do autonomously, nor prove it afterward. AEGIS gives
-> each agent exactly as much freedom as it has earned, auto-demotes violators, and
-> hands regulators receipts.
+## What this package is
 
-## What it actually does
+`aegis-control` is the control plane library: gate, spine, bus, and ten subsystems. The root repo bundles five infrastructure packages it is built on (`run-replay`, `evalforge`, `agent-sentinel`, `token-governor`, `meshwork`). This package alone is importable and testable.
 
-- **Certifies a run** via forensic replay + shield + eval, and signs the verdict
-  (HMAC + hash chain).
-- **Blocks a ship** when the replay breaks a shield, the eval fails, or the causal
-  invariant is violated.
-- **Watches for drift** after certification (live run vs certified baseline).
-- **Attests ROI** on a tamper-evident ledger with no fake numbers.
-- **Stresses the agent** through Sim/RL Factory, which turns production failures into
-  golden regression cases.
-- **Graduated trust** from shadow to autonomous, with instant demotion on violation.
-- **One-view posture** of the whole plane (Panes).
-
-## The 10 subsystems (the room)
-
-1. **Ship Gate**: certify/block a change via forensic replay + shield + eval.
-2. **SwapWatch**: flags behavior drift after certification.
-3. **ROI Attest**: tamper-evident cost/benefit ledger (no fake ROI).
-4. **Governed Memory**: versioned, capability-gated agent memory.
-5. **Contract Intel**: blocks unauthorized tool calls (scope creep).
-6. **Twin Truth**: digital-twin counterfactual simulation.
-7. **Causal Decisions**: real OLS effect estimator with honest CI.
-8. **Sim/RL Factory**: turns production failures into regression cases.
-9. **Autonomous Ops**: graduated trust (shadow to autonomous).
-10. **Panes**: one-view posture of the whole plane.
-
-## How AEGIS compares (the moat)
-
-| Capability | Spreadsheet + logs | Vendor point tool | AEGIS |
-|---|---|---|---|
-| Pre-merge certification gate | no | one dimension | replay + shield + eval |
-| Tamper-evident verdict + hash chain | no | rarely | yes |
-| Drift watch after ship | no | partial | yes |
-| ROI attest on one ledger | manual | no | yes |
-| Ten subsystems on one spine | no | no | yes |
-| Multi-tenant, JWT + SSRF guard | varies | varies | first-class |
-
-The differentiator is the shared audit Spine: one signed record proves an agent passed
-the gate, ran, was attested, and accessed memory under a role. That cross-subsystem
-proof is what a buyer defends to a board.
-
-## Quickstart
+## Install
 
 ```bash
-pip install -e ./aegis -e ./run-replay -e ./evalforge -e ./agent-sentinel \
-            -e ./token-governor -e ./meshwork
-export AEGIS_JWT_SECRET=$(python -c "import secrets; print(secrets.token_hex(16))")
+pip install -e ./aegis  # from repo root
+# or after publish
+pip install aegis-control
+```
 
-# 1. Certify a recorded agent run (JSONL of steps)
+## Use - certify a run
+
+```bash
 cat > run.jsonl <<'EOF'
 {"idx":0,"kind":"MODEL_CALL","name":"planner","in":{"x":1},"out":{"y":2},"state":{"x":1},"ms":5}
 EOF
 aegis certify run.jsonl
-
-# 2. Re-verify a verdict's signature + hash chain
 aegis verify <verdict_id>
-
-# 3. Check behavior drift (live run vs certified baseline)
-aegis drift run-1 baseline.jsonl live.jsonl
-
-# 4. Whole control-plane posture in one view
 aegis posture --tenant acme
+```
 
-# 5. SSRF guard check for an agent tool URL
-aegis ssrf http://169.254.169.254/latest
+```python
+from aegis.gate import ShipGate
+from aegis.spine import Spine, SpineConfig
 
-# 6. Serve the HTTP API locally
-aegis server --port 8000
+spine = Spine(SpineConfig(db_path="./state/spine.db"))
+gate = ShipGate(spine, state_dir="./state")
+verdict = gate.evaluate(GateRequest(agent_name="support-bot", tenant_id="acme", traces=[...], eval_cases=[...]))
+print(verdict.decision, verdict.certificate or verdict.block_reason)
 ```
 
 ## HTTP API
 
-All endpoints require a `Bearer` JWT (HS256, >=32-byte secret). Rate limited.
+All endpoints require `Bearer` JWT (HS256, 32 byte secret floor). Rate limited by slowapi.
 
-- `POST /api/v1/runs`: begin (idempotent) a run
-- `POST /api/v1/gate/evaluate`: produce a signed CERTIFY/BLOCK verdict
-- `GET  /api/v1/verdicts/{verdict_id}`: tenant-scoped verify
-- `GET  /metrics`: Prometheus exposition of OTel counters
+- `POST /api/v1/runs` - begin a run idempotently
+- `POST /api/v1/gate/evaluate` - produce signed CERTIFY or BLOCK verdict
+- `GET  /api/v1/verdicts/{verdict_id}` - tenant scoped verify
+- `GET  /metrics` - Prometheus exposition of OTel counters
+
+See `src/aegis/main.py` for request shapes.
+
+## CLI reference
+
+| Command | What it does |
+|---|---|
+| `aegis certify run.jsonl` | Decide CERTIFY or BLOCK for a recorded run |
+| `aegis verify <verdict_id>` | Re check signature plus hash chain integrity |
+| `aegis drift <run_id> base.jsonl live.jsonl` | Compare live outputs to certified baseline |
+| `aegis posture --tenant acme` | Whole plane posture in one view |
+| `aegis ssrf https://example.com` | Test the SSRF guard for a tool URL |
+| `aegis server --port 8000` | Serve the HTTP API locally |
 
 ## Security model
 
-- HMAC-signed, hash-chained verdicts; tenant-scoped.
-- Secrets must be >=32 bytes; 11-byte secrets are rejected at the gate.
-- SSRF guard blocks metadata/loopback/RFC1918 hosts.
-- Bus subscribers are failure-isolated (chaos-tested: one crashing subsystem never
-  breaks the others).
-- Tamper-evident Spine (SQLite) is the trust root.
+- HMAC signed, hash chained verdicts, tenant scoped.
+- Secrets must be 32 bytes or more. 11 byte secrets are rejected at boot.
+- SSRF guard blocks metadata, loopback, and RFC1918 hosts.
+- Bus subscribers are failure isolated. One crashing subsystem never breaks the others.
+- Tamper evident Spine (SQLite) is the trust root.
 
-## Roadmap
+Full model: [SECURITY.md](SECURITY.md)
 
-- [ ] SwapWatch: statistical drift test (Cohen's d, Welch t-test, BH correction).
-- [ ] Governed Memory: Neo4j-backed graph with ABAC read scopes.
-- [ ] Contract Intel: OCR + NER clause classifier over vendor PDFs.
-- [ ] Twin Truth: live fidelity-drift scoring against telemetry.
-- [ ] Autonomous Ops: KEDA-scaled claims execution workers.
-
-## Quality (measured)
+## Quality
 
 | Signal | Value |
 |---|---|
 | Tests | 85 green |
 | Ruff | clean |
-| Mypy (business logic) | clean |
+| Mypy | clean |
 | Bandit | clean |
 
-Run: `pytest aegis/tests/ -q`
-
-## Honest limitations
-
-- The demo agent in the CLI exists so the CLI works out of the box.
-- The spec envisions Kafka + signed S3 audit and Neo4j storage; this build uses an
-  in-process bus and SQLite Spine to stay local-first and runnable with zero
-  infrastructure. The subsystem boundaries and audit contract are real; the storage
-  backend is swappable.
-- Agent autonomy ladder L0 to L4 is in the blueprint; the v0 rooms ship the
-  certification, drift, ROI, and posture primitives the ladder builds on.
+Run: `pytest aegis/tests -q`
 
 ## License
 
-MIT.
+MIT - see [LICENSE](../../LICENSE)

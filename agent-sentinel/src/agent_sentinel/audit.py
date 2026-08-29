@@ -36,7 +36,7 @@ class AuditLog:
         if self._fh is not None:
             self._fh.close()
         fresh = not path.exists() or path.stat().st_size == 0
-        self._fh = open(path, "a", encoding="utf-8")
+        self._fh = open(path, "a", encoding="utf-8")  # noqa: SIM115 - intentionally keeps handle open for append + fsync
         self._day = path.name
         if fresh:
             self._prev_hash = ""

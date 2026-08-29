@@ -61,7 +61,7 @@ class TurnContext:
     turn_id: str = ""
 
     @staticmethod
-    def new(tenant_id: str = "default", session_id: str | None = None) -> "TurnContext":
+    def new(tenant_id: str = "default", session_id: str | None = None) -> TurnContext:
         return TurnContext(
             tenant_id=tenant_id,
             session_id=session_id or uuid.uuid4().hex[:12],

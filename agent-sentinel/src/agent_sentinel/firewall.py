@@ -15,13 +15,20 @@ from __future__ import annotations
 
 import os
 
+from . import rules
 from .audit import AuditLog
 from .breaker import BreakerConfig, CircuitBreaker
 from .models import (
-    Action, Channel, Decision, Label, ScanReport, Severity,
-    ToolCall, ToolResult, TurnContext, now_us,
+    Action,
+    Channel,
+    Decision,
+    Label,
+    ScanReport,
+    Severity,
+    ToolCall,
+    ToolResult,
+    TurnContext,
 )
-from . import rules
 
 
 class LatencyBudgetExceeded(RuntimeError):
@@ -75,8 +82,6 @@ class Sentinel:
         labels: list[Label] = []
         action = Action.ALLOW
 
-        has_block = any(fd.severity in self.block_on for fd in report.findings)
-
         if breach:
             labels.append(Label.LATENCY_BUDGET_BREACH)
             if channel is not Channel.USER_INPUT:
@@ -112,7 +117,7 @@ class Sentinel:
         ids = {fd.rule_id for fd in report.findings}
         if any(i.startswith("INJ_") for i in ids):
             out.append(Label.INJECTION_ATTEMPT)
-        if any(i.startswith("SECRET_") or i.startswith("OUT_SECRET") for i in ids):
+        if any(i.startswith(("SECRET_", "OUT_SECRET")) for i in ids):
             out.append(Label.SECRET_EXPOSURE)
         if "EXFIL_MARKDOWN_IMAGE" in ids:
             out.append(Label.EXFIL_ATTEMPT)
