@@ -1,8 +1,17 @@
-# Stop shipping AI agents you cannot prove are safe
+<p align="center">
+  <img src="docs/logo.svg" width="84" height="84" alt="AEGIS shield logo"/>
+</p>
 
-> **Gartner 2026: 40% of autonomous agents will be demoted for governance failure by 2027.** AEGIS is the open source gate the other 60% ship through.
+<h1 align="center">Stop shipping AI agents you cannot prove are safe</h1>
 
-**One open source room where every AI agent is certified before it ships, watched after it runs, and proven to auditors on one tamper-evident Spine.**
+<p align="center">
+  <strong>Gartner 2026: 40% of autonomous agents will be demoted for governance failure by 2027.</strong><br/>
+  AEGIS is the open source gate the other 60% ship through.
+</p>
+
+<p align="center"><strong>One open source room where every AI agent is certified before it ships, watched after it runs, and proven to auditors on one tamper-evident Spine.</strong></p>
+
+<p align="center">
 
 [![GitHub stars](https://img.shields.io/github/stars/harshaaaaw/aegis?style=social)](https://github.com/harshaaaaw/aegis)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -10,7 +19,19 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](aegis/pyproject.toml)
 [![Version](https://img.shields.io/badge/version-0.1.0-black.svg)](https://github.com/harshaaaaw/aegis/releases)
 
+</p>
+
+<p align="center">
+
 [Get started in 2 min](#quickstart) · [Documentation](aegis/README.md) · [Architecture](#architecture) · [Roadmap](ROADMAP.md) · [Security](SECURITY.md)
+
+</p>
+
+<p align="center">
+  <img src="docs/demo.gif" alt="AEGIS terminal demo: git clone, pip install, aegis certify -> CERTIFY" width="860"/>
+  <br/>
+  <em>One command. No cluster. Try it on your laptop, same contract in prod.</em>
+</p>
 
 AEGIS is the control plane we built because the usual setup does not work. Most teams have agents that touch refunds, PII, and deploys, logs in one place, evals in another, a spreadsheet for cost, and nothing that can prove to an auditor that version X was certified on date Y under model Z. When a provider swaps a model or a prompt gets exploited, you find out after the incident.
 
@@ -22,6 +43,14 @@ You do not need a platform team to try it. It runs on your laptop, installs with
 git clone https://github.com/harshaaaaw/aegis.git && pip install -e ./aegis -e ./run-replay -e ./evalforge -e ./agent-sentinel -e ./token-governor -e ./meshwork && aegis certify run.jsonl
 ```
 
+<p align="center">
+
+| Who is this for? |  |  |
+|---|---|---|
+| 👩‍💻 **Builders** ship without worrying a prompt slips to prod | 💰 **Finance** sees real cost vs benefit, not spreadsheets | 🛡️ **Compliance** answers who certified what, in one query |
+
+</p>
+
 ## The gap AEGIS fills
 
 Gartner 2026: 40% of enterprises will demote or decommission autonomous agents by 2027 after governance gaps are found only after production incidents. Today that gap looks like this: agents that touch refunds, PII, and production deploys with no gate, providers that swap models behind a stable alias, CFOs who cannot prove ROI without spreadsheets, and SOC 2 PDFs that cannot answer an auditor asking who certified this action. Trusted AI teams and YC founders are now building the same fix - a control plane, not a checklist. AEGIS is that room, open source and self hostable: every agent lives in one place, gets tested before it ships, is watched after it runs, governed by policy, valued by finance, and proven to compliance on one audit trail.
@@ -30,9 +59,11 @@ Gartner 2026: 40% of enterprises will demote or decommission autonomous agents b
 
 ## Why teams choose AEGIS
 
-- Stop unsafe agents before the merge. Replay, shield, and eval block risky changes automatically.
-- Catch silent drift after ship. SwapWatch fingerprints behavior and alerts when a model or tool changes under you.
-- Hand regulators receipts. Every verdict is HMAC signed and hash chained with tenant scope, so audits are a query not a project.
+|  |  |
+|---|---|
+| 🛡️ **Stop unsafe changes before the merge** | Replay, shield, and eval block risky changes automatically. |
+| 👁️ **Catch silent drift after ship** | SwapWatch fingerprints behavior and alerts when a model or tool changes under you. |
+| 🧾 **Hand regulators receipts** | Every verdict is HMAC signed and hash chained with tenant scope. Audits become a query. |
 
 ## Quickstart
 
@@ -81,18 +112,18 @@ aegis server --port 8000
 
 ## Features
 
-| Capability | Description |
-|---|---|
-| Ship Gate | Certifies a run via forensic replay + per turn shield + golden set eval. Blocks merges that break policy. |
-| SwapWatch | Detects behavior drift live vs certified baseline. Reconciles SLA cost. |
-| ROI Attest | Tamper evident cost and benefit ledger. No fake numbers, real attestation. |
-| Governed Memory | Versioned agent memory with capability checks and provenance. |
-| Contract Intel | Blocks unauthorized tool calls and scope creep before execution. |
-| Twin Truth | Counterfactual twin simulation to test what if without touching prod. |
-| Causal Decisions | OLS effect estimator with honest confidence intervals, not point claims. |
-| Sim/RL Factory | Turns prod failures into golden regression cases for the next gate. |
-| Autonomous Ops | Graduated trust from shadow to autonomous, with instant demotion on violation. |
-| Panes | One view posture of the whole plane for CISO, CFO and CTO. |
+|  | Capability | What it does |
+|---|---|---|
+| 🛡️ | Ship Gate | Certifies a run via forensic replay + per turn shield + golden set eval. Blocks merges that break policy. |
+| 👁️ | SwapWatch | Detects behavior drift live vs certified baseline. Reconciles SLA cost. |
+| 💰 | ROI Attest | Tamper evident cost and benefit ledger. No fake numbers, real attestation. |
+| 🧠 | Governed Memory | Versioned agent memory with capability checks and provenance. |
+| 📜 | Contract Intel | Blocks unauthorized tool calls and scope creep before execution. |
+| 🪞 | Twin Truth | Counterfactual twin simulation to test what if without touching prod. |
+| 📊 | Causal Decisions | OLS effect estimator with honest confidence intervals, not point claims. |
+| 🔁 | Sim/RL Factory | Turns prod failures into golden regression cases for the next gate. |
+| 🤖 | Autonomous Ops | Graduated trust from shadow to autonomous, with instant demotion on violation. |
+| 🖥️ | Panes | One view posture of the whole plane for CISO, CFO and CTO. |
 
 Each subsystem writes to the same tamper evident Spine and speaks only through the event bus. No subsystem can block another.
 
@@ -160,6 +191,11 @@ MIT © [Deva Harsha Mummareddy](https://github.com/harshaaaaw) - see [LICENSE](L
 
 ---
 
+<p align="center">
+
 [![Star History Chart](https://api.star-history.com/svg?repos=harshaaaaw/aegis&type=Date)](https://star-history.com/#harshaaaaw/aegis&Date)
 
-If AEGIS helped you ship safer agents, leave a star. It helps others find the project.
+<br/>
+<em>If AEGIS helped you ship safer agents, leave a star. It helps others find the project.</em>
+
+</p>
