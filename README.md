@@ -12,7 +12,11 @@
 
 [Get started in 2 min](#quickstart) · [Documentation](aegis/README.md) · [Architecture](#architecture) · [Roadmap](ROADMAP.md) · [Security](SECURITY.md)
 
-AEGIS is the open source control plane for enterprise AI agents - the room where every agent lives, gets tested before launch, watched in production, governed by policy, valued by finance, and proven to compliance.
+AEGIS is the control plane we built because the usual setup does not work. Most teams have agents that touch refunds, PII, and deploys, logs in one place, evals in another, a spreadsheet for cost, and nothing that can prove to an auditor that version X was certified on date Y under model Z. When a provider swaps a model or a prompt gets exploited, you find out after the incident.
+
+We put the whole lifecycle in one room. Every agent lives here, gets replayed and shielded before it merges, gets watched for drift after it ships, gets checked for memory access and tool scope, gets priced for ROI, and gets written to a single signed ledger. Same bus, same Spine, same identity. Ten subsystems that actually share state, not ten logos on a slide.
+
+You do not need a platform team to try it. It runs on your laptop, installs with pip, and certifies a run in one command. No cluster, no secret to find. If you like it, run the same contract in Kubernetes. MIT, self-hosted, no sales call to get started.
 
 ```bash
 git clone https://github.com/harshaaaaw/aegis.git && pip install -e ./aegis -e ./run-replay -e ./evalforge -e ./agent-sentinel -e ./token-governor -e ./meshwork && aegis certify run.jsonl
