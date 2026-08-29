@@ -24,8 +24,9 @@ from agent_sentinel import (  # type: ignore[import-untyped, attr-defined]
     ToolResult,
     TurnContext,
 )
-from evalforge import EvalCase, EvalRunner, GoldenSet  # type: ignore[import-untyped, attr-defined]
 from run_replay import Replayer, StepKind  # type: ignore[import-untyped, attr-defined]
+
+from evalforge import EvalCase, EvalRunner, GoldenSet  # type: ignore[import-untyped, attr-defined]
 
 from .spine import Spine
 

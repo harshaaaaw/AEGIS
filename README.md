@@ -1,6 +1,8 @@
-# AEGIS - The open source control plane for enterprise AI agents
+# Stop shipping AI agents you cannot prove are safe
 
-**Certify every agent before it ships. Watch it after. Prove it to auditors.**
+> **Gartner 2026: 40% of autonomous agents will be demoted for governance failure by 2027.** AEGIS is the open source gate the other 60% ship through.
+
+**One open source room where every AI agent is certified before it ships, watched after it runs, and proven to auditors on one tamper-evident Spine.**
 
 [![GitHub stars](https://img.shields.io/github/stars/harshaaaaw/aegis?style=social)](https://github.com/harshaaaaw/aegis)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -8,19 +10,19 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](aegis/pyproject.toml)
 [![Version](https://img.shields.io/badge/version-0.1.0-black.svg)](https://github.com/harshaaaaw/aegis/releases)
 
-[Demo](#quickstart) · [Documentation](aegis/README.md) · [Architecture](#architecture) · [Roadmap](ROADMAP.md) · [Security](SECURITY.md)
+[Get started in 2 min](#quickstart) · [Documentation](aegis/README.md) · [Architecture](#architecture) · [Roadmap](ROADMAP.md) · [Security](SECURITY.md)
 
-> AEGIS is an open source AI agent control plane - certify, govern, and prove every agent run on a tamper-evident spine. One room where ten subsystems share one audit trail, one identity model, and one posture view.
+AEGIS is the open source control plane for enterprise AI agents - the room where every agent lives, gets tested before launch, watched in production, governed by policy, valued by finance, and proven to compliance.
 
 ![AEGIS demo](https://via.placeholder.com/1200x600/0a0a0a/00ff88?text=AEGIS+Terminal+Demo+%3A+aegis+certify+run.jsonl+%E2%86%92+CERTIFY+%7C+BLOCK)
 
-### Trusted by builders who ship agents to production
+**Try it now:** `git clone https://github.com/harshaaaaw/aegis.git && pip install -e ./aegis -e ./run-replay -e ./evalforge -e ./agent-sentinel -e ./token-governor -e ./meshwork && aegis certify run.jsonl`
 
-AEGIS exists because enterprises running hundreds of AI agents touching money and production systems cannot control what each may do autonomously, nor prove it afterward.
+## The gap AEGIS fills
 
-## The problem in 3 sentences
+Gartner 2026: 40% of enterprises will demote or decommission autonomous agents by 2027 after governance gaps are found only after production incidents. Today that gap looks like this: agents that touch refunds, PII, and production deploys with no gate, providers that swap models behind a stable alias, CFOs who cannot prove ROI without spreadsheets, and SOC 2 PDFs that cannot answer an auditor asking who certified this action. Trusted AI teams and YC founders are now building the same fix - a control plane, not a checklist. AEGIS is that room, open source and self hostable: every agent lives in one place, gets tested before it ships, is watched after it runs, governed by policy, valued by finance, and proven to compliance on one audit trail.
 
-You have deployed AI across your business and you cannot trust that it is safe, know if your providers silently changed a model, prove what it is worth, control who sees what, or show auditors you are compliant. You have 6 separate tools and no single source of truth. AEGIS is that single source of truth - one audit trail, one posture view.
+> One room, one audit trail, one pane per executive. That is the moat no single feature can copy.
 
 ## Why teams choose AEGIS
 
