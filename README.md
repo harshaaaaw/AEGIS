@@ -14,9 +14,9 @@
 
 AEGIS is the open source control plane for enterprise AI agents - the room where every agent lives, gets tested before launch, watched in production, governed by policy, valued by finance, and proven to compliance.
 
-![AEGIS demo](https://via.placeholder.com/1200x600/0a0a0a/00ff88?text=AEGIS+Terminal+Demo+%3A+aegis+certify+run.jsonl+%E2%86%92+CERTIFY+%7C+BLOCK)
-
-**Try it now:** `git clone https://github.com/harshaaaaw/aegis.git && pip install -e ./aegis -e ./run-replay -e ./evalforge -e ./agent-sentinel -e ./token-governor -e ./meshwork && aegis certify run.jsonl`
+```bash
+git clone https://github.com/harshaaaaw/aegis.git && pip install -e ./aegis -e ./run-replay -e ./evalforge -e ./agent-sentinel -e ./token-governor -e ./meshwork && aegis certify run.jsonl
+```
 
 ## The gap AEGIS fills
 
@@ -26,11 +26,11 @@ Gartner 2026: 40% of enterprises will demote or decommission autonomous agents b
 
 ## Why teams choose AEGIS
 
-- **Stop unsafe agents before the merge** - replay + shield + eval gate blocks risky changes automatically, so shipping stays fast and safe.
-- **Catch silent drift after ship** - SwapWatch fingerprints behavior and alerts when a model or tool changes under you, so SLA cost stays honest.
-- **Hand regulators receipts** - every verdict is HMAC signed and hash chained with tenant scope, so audits are a query not a project.
+- Stop unsafe agents before the merge. Replay, shield, and eval block risky changes automatically.
+- Catch silent drift after ship. SwapWatch fingerprints behavior and alerts when a model or tool changes under you.
+- Hand regulators receipts. Every verdict is HMAC signed and hash chained with tenant scope, so audits are a query not a project.
 
-## Quickstart - 3 steps, under 2 minutes
+## Quickstart
 
 Copy paste on a clean machine. No Kubernetes, no JWT setup, no secret to find.
 
@@ -75,7 +75,7 @@ aegis server --port 8000
 
 [Full quickstart and CLI reference →](aegis/README.md#quickstart)
 
-## Features - scannable, not walls
+## Features
 
 | Capability | Description |
 |---|---|
@@ -92,13 +92,7 @@ aegis server --port 8000
 
 Each subsystem writes to the same tamper evident Spine and speaks only through the event bus. No subsystem can block another.
 
-## Want governed AI without building this yourself?
-
-This repo is the open core - fully self hostable, MIT licensed, useful alone. **AEGIS Cloud** adds SSO, RBAC, audit vault, and hosted run replay.
-
-[**Try Cloud free**](https://github.com/harshaaaaw/aegis) | [Book a demo](https://github.com/harshaaaaw/aegis/discussions)
-
-## Architecture - how it works in 10 seconds
+## Architecture
 
 ```mermaid
 graph TB
@@ -124,8 +118,6 @@ graph TB
 
 One K8s namespace in production. One process on your laptop. Same contracts, no infra needed to try.
 
-[Deep architecture →](aegis/README.md#architecture) · [Security model →](SECURITY.md)
-
 ## How AEGIS compares
 
 | Capability | Spreadsheet + logs | Vendor point tool | AEGIS |
@@ -145,34 +137,7 @@ The moat is the shared audit Spine: one signed record proves an agent passed the
 - Subsystems 2 to 9 ship at varying depth: Ship Gate and Causal Decisions carry real logic, the others are wired rooms with focused behavior and are the natural next depth to build.
 - The eval pipeline stand in concatenates outputs. Wire a real candidate pipeline before relying on it for ship decisions.
 
-## Roadmap
-
-- [ ] SwapWatch statistical drift test (Cohen d, Welch t test, BH correction)
-- [ ] Governed Memory on Neo4j with ABAC read scopes
-- [ ] Contract Intel OCR plus NER clause classifier
-- [ ] Twin Truth live fidelity drift scoring
-- [ ] KEDA scaled Autonomous Ops workers
-- [ ] Helm chart with OIDC and S3 audit backend
-
-See [ROADMAP.md](ROADMAP.md) for timeline and design notes.
-
-## Quality - measured, not claimed
-
-| Signal | Value |
-|---|---|
-| Tests | 85 green |
-| Ruff | clean |
-| Mypy (business logic) | clean |
-| Bandit | clean |
-
-```bash
-pytest aegis/tests -q
-ruff check .
-mypy aegis/src/aegis --config-file aegis/pyproject.toml
-bandit -r aegis/src/aegis
-```
-
-## Contributing - we respond in 48 hours
+## Contributing
 
 1. Fork the repo
 2. Create a branch: `git checkout -b feature/your-feature`
