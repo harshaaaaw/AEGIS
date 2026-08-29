@@ -37,7 +37,7 @@ AEGIS is the control plane we built because the usual setup does not work. Most 
 
 We put the whole lifecycle in one room. Every agent lives here, gets replayed and shielded before it merges, gets watched for drift after it ships, gets checked for memory access and tool scope, gets priced for ROI, and gets written to a single signed ledger. Same bus, same Spine, same identity. Ten subsystems that actually share state, not ten logos on a slide.
 
-You run it on your laptop with one command. No cluster, no secret. Then open the dashboard and connect any agent — Claude, Codex, Hermes, OpenClaw, or your own CLI — to the same Spine.
+You run it on your laptop with one command. No cluster, no secret. Then open the dashboard and connect any agent - Claude, Codex, Hermes, OpenClaw, or your own CLI - to the same Spine.
 
 ```bash
 git clone https://github.com/harshaaaaw/aegis.git && cd aegis
@@ -67,9 +67,9 @@ Gartner 2026: 40% of enterprises will demote or decommission autonomous agents b
 | 🛡️ **Stop unsafe changes before the merge** | Replay, shield, and eval block risky changes automatically. |
 | 👁️ **Catch silent drift after ship** | SwapWatch alerts when a model or tool changes under you. |
 | 🧾 **Hand regulators receipts** | Every verdict is HMAC signed and hash chained with tenant scope. Audits become a query. |
-| 🖥️ **Manage it in one terminal** | `aegis tui` shows flow, verdicts, posture, agents, skills — live. |
+| 🖥️ **Manage it in one terminal** | `aegis tui` shows flow, verdicts, posture, agents, skills - live. |
 
-## Quickstart — consumer friendly
+## Quickstart
 
 No K8s, no JWT, no secret. 30 seconds to a signed verdict.
 
@@ -101,7 +101,7 @@ aegis certify run.jsonl && aegis verify <id>   # raw flow
 
 [Full CLI reference →](aegis/README.md#quickstart)
 
-## Connect any agent — one Spine
+## Connect any agent
 
 Every agent writes to the same signed ledger. Use its own command or the generic one.
 
@@ -115,15 +115,15 @@ Every agent writes to the same signed ledger. Use its own command or the generic
 
 Each run is recorded, replayed, shielded, evaled, signed, and streamed to `aegis tui` or `aegis watch`. If the CLI is not installed, a grounded mock still produces a verifiable CERTIFY/BLOCK so consumers can try without setup.
 
-## Terminal dashboard — watch flow and manage anything
+## Terminal dashboard
 
 `aegis tui` is a Textual TUI (like `tuicode` and `agent-dashboard`) that hosts the control plane. No browser.
 
-- **Dashboard** — recent verdicts, trust tier, drift count at a glance
-- **Flow** — live Spine events (CERTIFY, BLOCK, drift, tier change) with notifications
-- **Runs / Verdicts** — certify and verify without leaving the terminal
-- **Agents** — connected agents and their last run, per-agent command shown
-- **Skills** — installed skills, required ones starred, grounded check
+- **Dashboard** - recent verdicts, trust tier, drift count at a glance
+- **Flow** - live Spine events (CERTIFY, BLOCK, drift, tier change) with notifications
+- **Runs / Verdicts** - certify and verify without leaving the terminal
+- **Agents** - connected agents and their last run, per-agent command shown
+- **Skills** - installed skills, required ones starred, grounded check
 
 Keys: `1` dashboard `2` flow `3` runs `4` agents `5` skills `c` certify demo `r` refresh `q` quit.
 
@@ -174,7 +174,7 @@ graph TB
 
 One K8s namespace in prod. One process on your laptop. Same contracts, no infra needed to try.
 
-## Skills — grounded to the flow
+## Skills
 
 Skills are the only way to extend the plane and they must prove they obey the objective.
 
@@ -228,7 +228,7 @@ MIT © [Deva Harsha Mummareddy](https://github.com/harshaaaaw) - see [LICENSE](L
 
 ---
 
-<!-- Star history temporarily hidden due to GitHub API restriction — restore when star-history.com recovers -->
-<p align="center"><em>Star history paused — GitHub restricted the stargazer API. Track stars on the repo page until it returns: <code>github.com/harshaaaaw/AEGIS</code></em></p>
+<!-- Star history temporarily hidden due to GitHub API restriction - restore when star-history.com recovers -->
+<p align="center"><em>Star history paused - GitHub restricted the stargazer API. Track stars on the repo page until it returns: <code>github.com/harshaaaaw/AEGIS</code></em></p>
 
 <p align="center"><em>If AEGIS helped you ship safer agents, leave a star. It helps others find the project.</em></p>

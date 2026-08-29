@@ -1,4 +1,4 @@
-"""AEGIS TUI — consumer dashboard that feels like Claude Code / Codex terminal.
+"""AEGIS TUI - consumer dashboard that feels like Claude Code / Codex terminal.
 
 One screen to watch the flow, get notified, and manage anything.
 No cluster, no browser, just:  aegis tui
